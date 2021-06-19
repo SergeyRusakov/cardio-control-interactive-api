@@ -13,6 +13,10 @@ const subscription = new mongoose.Schema({
     type: Date,
     required: false,
   },
+  isMessage: {
+    type: Boolean,
+    required: false,
+  },
   keys: {
     p256dh: {
       type: String,

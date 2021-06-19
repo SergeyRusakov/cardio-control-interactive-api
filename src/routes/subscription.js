@@ -10,7 +10,8 @@ router.post('', async (req, res) => {
     const userId = res.locals._id;
 
     let sub = Subscription.findOne({
-      userId
+      userId,
+      isMessage: true
     });
 
     if (!sub) {

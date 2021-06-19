@@ -119,12 +119,14 @@ router.post('/message/:id', async (req, res) => {
 
     await chat.sendMessage(authorId, body.author, body.message);
 
-    return Promise.all(subscriptions.map(sub => webPush.sendNotification(
+    Promise.all(subscriptions.map(sub => webPush.sendNotification(
         sub, JSON.stringify(notificationPayload))))
         .then(() => res.status(200).json(chat))
         .catch(err => {
           console.error('Error sending notification, reason: ', err);
         });
+
+    return res.status(200).json(chat);
   } catch (e) {
     console.log(e);
     res.status(500).json({ status: 500, message: 'Данных нет в БД' });
