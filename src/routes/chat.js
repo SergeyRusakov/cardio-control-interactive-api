@@ -67,6 +67,12 @@ router.post('/:patientId', async (req, res) => {
 
 router.post('/message/:id', async (req, res) => {
     try {
+        const body = req.body;
+
+        const authorId = req.local._id;
+        if (!authorId)
+            return res.status(401).json({status: 401, message: 'Неавторизованный запрос'});
+
         const chatId = req.params.id;
 
         let chat = await Chat.findById(chatId);
@@ -74,7 +80,9 @@ router.post('/message/:id', async (req, res) => {
         if (!chat)
             return res.status(400).json({status: 400, message: 'Чат не найден'});
 
-        return res.status(200).json(chat);
+        await chat.sendMessage(authorId, body.author, body.message);
+
+        return res.status(201).json(chat);
     } catch (e) {
         console.log(e);
     }
