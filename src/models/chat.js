@@ -40,7 +40,8 @@ chat.methods.sendMessage = async function(authorId, authorName, payload) {
         author: authorName,
     });
 
-    await this.save;
+    await this.save();
+    return this;
 }
 
 module.exports = mongoose.model('Chat', chat);

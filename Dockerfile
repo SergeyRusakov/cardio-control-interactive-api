@@ -8,6 +8,6 @@ COPY ["package.json", "src", "./"]
 RUN npm install --silent
 RUN ls /usr/src
 
-EXPOSE 8000
+EXPOSE 8080
 
 CMD ["node", "index.js"]
