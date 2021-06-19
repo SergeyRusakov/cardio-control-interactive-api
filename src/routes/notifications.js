@@ -8,7 +8,7 @@ const webPush = require('web-push');
 
 const Subscription = require('../models/subscription');
 
-router.get('/', async (req, res) => {
+router.post('/', async (req, res) => {
     try {
         const { body } = req;
 
