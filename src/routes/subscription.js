@@ -7,12 +7,18 @@ router.post('', async (req, res) => {
   try {
     const { body } = req;
 
-    const sub = new Subscription(body);
+    const userId = res.locals._id;
 
-    await sub.save();
+    let sub = Subscription.findOne({
+      userId
+    });
+
+    if (!sub) {
+      sub = new Subscription({...body, userId});
+      await sub.save();
+    }
 
     return res.status(201).json(sub);
-
   } catch (e) {
     console.error(e);
     res.status(500).json({status: 500, message: 'Cannot create subscription'});

@@ -100,9 +100,9 @@ router.post('/message/:id', async (req, res) => {
 
     const notificationPayload = {
       'notification': {
-        'title': 'Angular News',
-        'body': 'Newsletter Available!',
-        'icon': 'assets/main-page-logo-small-hat.png',
+        'title': 'Кардио-контроль',
+        'body': 'Сообщение от лечащего врача',
+        'icon': 'https://кардио-контроль.рф/assets/icons/icon-128x128.png',
         'vibrate': [100, 50, 100],
         'data': {
           'dateOfArrival': Date.now(),
@@ -110,7 +110,7 @@ router.post('/message/:id', async (req, res) => {
         },
         'actions': [{
           'action': 'explore',
-          'title': 'Go to the site'
+          'title': 'Перейти в приложение'
         }]
       }
     };
@@ -124,7 +124,6 @@ router.post('/message/:id', async (req, res) => {
         .then(() => res.status(200).json(chat))
         .catch(err => {
           console.error('Error sending notification, reason: ', err);
-          res.sendStatus(500);
         });
   } catch (e) {
     console.log(e);

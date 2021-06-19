@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const subscription = new mongoose.Schema({
+  userId: {
+    type: String,
+    required: true,
+  },
   endpoint: {
     type: String,
     required: true,
