@@ -1,4 +1,4 @@
-import {Chat} from "../models/chat";
+const Chat = require("../models/chat");
 
 const express = require('express');
 
@@ -17,6 +17,7 @@ router.get('/doctor', async (req, res) => {
         return res.status(200).json(chat);
     } catch (e) {
         console.log(e);
+        res.status(500).json({status: 500, message: 'Данных нет в БД'});
     }
 });
 
@@ -33,6 +34,7 @@ router.get('/patient', async (req, res) => {
         return res.status(200).json(chat);
     } catch (e) {
         console.log(e);
+        res.status(500).json({status: 500, message: 'Данных нет в БД'});
     }
 });
 
@@ -62,6 +64,7 @@ router.post('/:patientId', async (req, res) => {
         return res.status(400).json({status: 400, message: 'Пациент уже привязан к лечащему врачу'});
     } catch (e) {
         console.log(e);
+        res.status(500).json({status: 500, message: 'Данных нет в БД'});
     }
 });
 
@@ -85,5 +88,8 @@ router.post('/message/:id', async (req, res) => {
         return res.status(201).json(chat);
     } catch (e) {
         console.log(e);
+        res.status(500).json({status: 500, message: 'Данных нет в БД'});
     }
 });
+
+module.exports = router;

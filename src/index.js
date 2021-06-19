@@ -1,15 +1,16 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const {auth} = require('src/middlewares/auth');
-const {cors} = require('cors');
+const auth = require('./middlewares/auth');
+const chatRouter = require('./routes/chat');
 
 const app = express();
 
-app.use(cors());
 app.use(bodyParser.json());
 
 app.use(auth);
+
+app.use('/chat', chatRouter);
 
 async function serverStart() {
     try {

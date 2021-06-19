@@ -43,4 +43,4 @@ chat.methods.sendMessage = async function(authorId, authorName, payload) {
     await this.save;
 }
 
-export const Chat = mongoose.model('Chat', chat);
+module.exports = mongoose.model('Chat', chat);
