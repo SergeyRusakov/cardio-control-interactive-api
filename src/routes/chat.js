@@ -74,7 +74,7 @@ router.post('/message/:id', async (req, res) => {
         if (!chat)
             return res.status(400).json({status: 400, message: 'Чат не найден'});
 
-        return res.status(400).json({status: 400, message: 'Пациент уже привязан к лечащему врачу'});
+        return res.status(200).json(chat);
     } catch (e) {
         console.log(e);
     }
