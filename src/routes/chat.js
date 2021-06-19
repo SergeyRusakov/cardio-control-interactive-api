@@ -9,8 +9,8 @@ const webPush = require('web-push');
 const Subscription = require('../models/subscription');
 
 const vapidKeys = {
-  'publicKey': 'BLBx-hf2WrL2qEa0qKb-aCJbcxEvyn62GDTyyP9KTS5K7ZL0K7TfmOKSPqp8vQF0DaG8hpSBknz_x3qf5F4iEFo',
-  'privateKey': 'PkVHOUKgY29NM7myQXXoGbp_bH_9j-cxW5cO-fGcSsA'
+  'publicKey': 'BPKw8djlbv5FSig5Qd_LyaolgHnbyXawLAhNN78M6-IJXRIWUHQkMZe7LVOscMRED9s8r9-ajXtipi95jPJlCwk',
+  'privateKey': '_PVKG09sLJJafcAcY7_THuubz-ozJlY-JjIiuO7Drfs'
 };
 
 webPush.setVapidDetails(
@@ -21,7 +21,7 @@ webPush.setVapidDetails(
 
 router.get('/doctor', async (req, res) => {
   try {
-    const doctorId = req.local._id;
+    const doctorId = res.locals._id;
     if (!doctorId)
       return res.status(401).json({ status: 401, message: 'Неавторизованный запрос' });
 
@@ -38,7 +38,7 @@ router.get('/doctor', async (req, res) => {
 
 router.get('/patient', async (req, res) => {
   try {
-    const patientId = req.local._id;
+    const patientId = res.locals._id;
     if (!patientId)
       return res.status(401).json({ status: 401, message: 'Неавторизованный запрос' });
 
@@ -56,7 +56,7 @@ router.get('/patient', async (req, res) => {
 router.post('/:patientId', async (req, res) => {
   try {
     const patientId = req.params.patientId;
-    const doctorId = req.local._id;
+    const doctorId = res.locals._id;
     if (!doctorId)
       return res.status(401).json({ status: 401, message: 'Неавторизованный запрос' });
 
@@ -87,7 +87,7 @@ router.post('/message/:id', async (req, res) => {
   try {
     const body = req.body;
 
-    const authorId = req.local._id;
+    const authorId = res.locals._id;
     if (!authorId)
       return res.status(401).json({ status: 401, message: 'Неавторизованный запрос' });
 
@@ -117,17 +117,15 @@ router.post('/message/:id', async (req, res) => {
 
     const subscriptions = await Subscription.find(() => true);
 
-    Promise.all(subscriptions.map(sub => webPush.sendNotification(
-      sub, JSON.stringify(notificationPayload))))
-      .then(() => res.status(200).json({ message: 'Newsletter sent successfully.' }))
-      .catch(err => {
-        console.error('Error sending notification, reason: ', err);
-        res.sendStatus(500);
-      });
-
     await chat.sendMessage(authorId, body.author, body.message);
 
-    return res.status(201).json(chat);
+    return Promise.all(subscriptions.map(sub => webPush.sendNotification(
+        sub, JSON.stringify(notificationPayload))))
+        .then(() => res.status(200).json(chat))
+        .catch(err => {
+          console.error('Error sending notification, reason: ', err);
+          res.sendStatus(500);
+        });
   } catch (e) {
     console.log(e);
     res.status(500).json({ status: 500, message: 'Данных нет в БД' });
