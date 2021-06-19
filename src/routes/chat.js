@@ -6,29 +6,13 @@ const router = express.Router();
 
 router.get('/doctor', async (req, res) => {
     try {
-        const id = req.params.id;
+        const doctorId = req.local._id;
+        if (!doctorId)
+            return res.status(401).json({status: 401, message: 'Неавторизованный запрос'});
 
-        const chat = await Chat.findById(id);
-
-        if (!chat) {
-            return res.status(404).end();
-        }
-
-        return res.status(200).json(chat);
-    } catch (e) {
-        console.log(e);
-    }
-});
-
-router.get('/patient/:id', async (req, res) => {
-    try {
-        const id = req.params.id;
-
-        const chat = await Chat.findById(id);
-
-        if (!chat) {
-            return res.status(404).end();
-        }
+        const chat = await Chat.find({
+            doctorId
+        });
 
         return res.status(200).json(chat);
     } catch (e) {
@@ -36,19 +20,61 @@ router.get('/patient/:id', async (req, res) => {
     }
 });
 
-router.post('/', async (req, res) => {
+router.get('/patient', async (req, res) => {
     try {
-        const id = req.params.id;
+        const patientId = req.local._id;
+        if (!patientId)
+            return res.status(401).json({status: 401, message: 'Неавторизованный запрос'});
 
-        const chat = new Chat({
+        const chat = await Chat.findOne({
+            patientId
+        });
 
+        return res.status(200).json(chat);
+    } catch (e) {
+        console.log(e);
+    }
+});
+
+router.post('/:patientId', async (req, res) => {
+    try {
+        const patientId = req.params.patientId;
+        const doctorId = req.local._id;
+        if (!doctorId)
+            return res.status(401).json({status: 401, message: 'Неавторизованный запрос'});
+
+        let chat = await Chat.findOne({
+            patientId
         });
 
         if (!chat) {
-            return res.status(404).end();
+            chat = new Chat({
+                patientId,
+                doctorId,
+                messages: []
+            });
+
+            await chat.save();
+
+            return res.status(200).json(chat);
         }
 
-        return res.status(200).json(chat);
+        return res.status(400).json({status: 400, message: 'Пациент уже привязан к лечащему врачу'});
+    } catch (e) {
+        console.log(e);
+    }
+});
+
+router.post('/message/:id', async (req, res) => {
+    try {
+        const chatId = req.params.id;
+
+        let chat = await Chat.findById(chatId);
+
+        if (!chat)
+            return res.status(400).json({status: 400, message: 'Чат не найден'});
+
+        return res.status(400).json({status: 400, message: 'Пациент уже привязан к лечащему врачу'});
     } catch (e) {
         console.log(e);
     }

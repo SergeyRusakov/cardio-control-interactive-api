@@ -1,12 +1,15 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const {auth} = require('src/middlewares/auth');
 const {cors} = require('cors');
 
 const app = express();
 
 app.use(cors());
 app.use(bodyParser.json());
+
+app.use(auth);
 
 async function serverStart() {
     try {
